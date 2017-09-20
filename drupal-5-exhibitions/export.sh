@@ -14,8 +14,8 @@ C=`tput setaf 6`
 W=`tput sgr0`
 
 # Folder to export to
-OUTPUT='/Users/ntrive/Documents/WebCollections/static-exhibitions/sites'
-BACKUP_DIR='/Users/ntrive/tmp'
+OUTPUT='sites'
+BACKUP_DIR=~/tmp
 FROM_BACKUP=false
 WGET_PARAMS="--page-requisites --convert-links --domains=artic.edu --no-host-directories --no-directories --timestamping " #  --adjust-extension --no-clobber --no-parent
 
@@ -65,45 +65,53 @@ function move_js ()
 {
     echo "Moving js files..."
     mkdir js
-
     mv */*.js js/
-    LC_ALL=C find . -name '*' -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.js"?"../js\/\1\.js"?g' {} \;
-
     mv *.js js/
-    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.js"?"js\/\1\.js"?g' {} \;
+}
 
+function clean_js ()
+{
+    echo "Cleaning js files..."
+    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.js?"../js\/\1\.js?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.js?"js\/\1\.js?g' {} \;
 }
 
 function move_css ()
 {
     echo "Moving css files..."
     mkdir css
-
     mv */*.css css/
-    LC_ALL=C find . -name '*' -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.css"?"../css\/\1\.css"?g' {} \;
-
     mv *.css css/
-    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.css"?"css\/\1\.css"?g' {} \;
+}
+
+function clean_css ()
+{
+    echo "Cleaning css files..."
+    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.css?"../css\/\1\.css?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.css?"css\/\1\.css?g' {} \;
 }
 
 function move_image ()
 {
     echo "Moving image files..."
     mkdir images
-
     mv */*.png images/
     mv */*.jpg images/
     mv */*.gif images/
-    LC_ALL=C find . -name '*' -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.png"?"../images\/\1\.png"?g' {} \;
-    LC_ALL=C find . -name '*' -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.jpg"?"../images\/\1\.jpg"?g' {} \;
-    LC_ALL=C find . -name '*' -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.gif"?"../images\/\1\.gif"?g' {} \;
-
     mv *.png images/
     mv *.jpg images/
     mv *.gif images/
-    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.png"?"images\/\1\.png"?g' {} \;
-    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.jpg"?"images\/\1\.jpg"?g' {} \;
-    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.gif"?"images\/\1\.gif"?g' {} \;
+}
+
+function clean_image ()
+{
+    echo "Cleaning image files..."
+    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.png?"../images\/\1\.png?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.jpg?"../images\/\1\.jpg?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([^"]*\)\.gif?"../images\/\1\.gif?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.png?"images\/\1\.png?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.jpg?"images\/\1\.jpg?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([^"]*\)\.gif?"images\/\1\.gif?g' {} \;
 }
 
 # All variables in bash are global, so this method doesn't need to return anything.
@@ -112,8 +120,10 @@ function set_pages_var()
 {
     if [ "$site" = "Ryerson-2015" ] ; then
 	pages=( "${Ryerson_2015_pages[@]}" )
-    # For other sites, add an else-if:
-    # elif [ "$site" = "Ryerson-2014" ] ; then
+    elif [ "$site" = "Ryerson-2014" ] ; then
+	pages=( "${Ryerson_2014_pages[@]}" )
+    elif [ "$site" = "Ryerson" ] ; then
+	pages=( "${Ryerson_pages[@]}" )
     fi
 }
 
@@ -138,6 +148,9 @@ function fix_links ()
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"resource_link\":\"\\\/aic\\\/collections\\\/exhibitions\\\/$site\\\/resource?\"resource_link\":\"..?g" {} \;
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"resource_url\":\"..\/images\/http:\\\/\\\/www.artic.edu\\\/aic\\\/collections\\\/citi\\\/resources?\"resource_url\":\"..\\\/images?g" {} \;
     
+    # Make links local
+    #LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e "s?http:\/\/www.artic.edu\/aic\/collections\/exhibitions\/$site\/$page\([^\"]*\)?$page\1?g" {} \;
+
     set_pages_var
 
     for page in "${pages[@]}"
@@ -196,16 +209,15 @@ function remove_bad_files()
 
 # Array of sites to export
 sites=(
-    'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2008'
-    'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2015'
-    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson/CopyrightLaw'
-    # 'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2009'
-    # 'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2010'
-    # 'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2011'
-    # 'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2012'
-    # 'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2013'
-    # 'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2014'
-    # 'http://www.artic.edu/aic/collections/exhibitions/Ryerson'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2008'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2015'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2009'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2010'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2011'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2012'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2013'
+    'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2014'
+    #'http://www.artic.edu/aic/collections/exhibitions/Ryerson'
     # 'http://www.artic.edu/aic/collections/exhibitions/Modern'
     # 'http://www.artic.edu/aic/collections/exhibitions/Lichtenstein'
     # 'http://www.artic.edu/aic/collections/exhibitions/AfricanAmerican'
@@ -264,6 +276,35 @@ Ryerson_2015_pages=(
     'Tools-of-the-Trade-19th-20th-Century-Architectural-Trade-Catalogs'
 )
 
+Ryerson_2014_pages=(
+    'Comic-Art-Architecture-Chris-Ware'
+    'Around-World-Travel-Sketches'
+    'Hired-Hand'
+    'Rene-Magritte-Art-in-Belgium'
+    'Czech-Avant-Garde-Book'
+)
+
+Ryerson_pages=(
+    'CopyrightLaw'
+    'Lost-Found'
+    'ChicagoPlanning'
+    'Goldberg'
+    'Design-Inspiration'
+    'Making-History'
+    'Caricatures'
+    'Paper-Architecture'
+    'Burnham-Centennial'
+    'Modern-Inkers'
+    'In-Succession'
+    'Beauty-Book'
+    'Provoke'
+    'Devouring-Books'
+    'What-Vincent-Saw'
+    'Fashion-Plates'
+    'Armory'
+    'Published-Picasso'
+)
+
 # Loop through sites and export
 if [ -f _export.status ]; then
     read SITE < _export.status
@@ -312,6 +353,9 @@ do
        move_js
        move_css
        move_image
+       clean_js
+       clean_css
+       clean_image
        fix_links
        remove_bad_files
        move_files_to_index
