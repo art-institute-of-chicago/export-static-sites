@@ -371,3 +371,9 @@ do
 done
 
 rm _export.status
+
+# After importing all the sites, fixs links across microsites
+echo "Fixing links across microsites..."
+cd $OUTPUT
+LC_ALL=C find . -depth 2 -name "index.html" -exec sed -i "" -e "s?http://www.artic.edu/aic/collections/exhibitions/Ryerson/\([^\"]*\)\"?../Ryerson/\1\"?g" {} \;
+cd ../
