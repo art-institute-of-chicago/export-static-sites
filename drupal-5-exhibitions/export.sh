@@ -145,11 +145,16 @@ function fix_links ()
 
     # Fix galleryObjects JS object
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E 's/http:\\\/\\\/www.artic.edu\\\/aic\\\/collections\\\/citi\\\/resources\\\/thumbnails\\\///g' {} \;
+    LC_ALL=C find . -name '*' -type f -exec sed -i "" -E 's/http:\\\/\\\/www.artic.edu\\\/aic\\\/collections\\\/citi\\\/images\\\/standard\\\/[a-zA-Z]*\\\/[a-zA-Z0-9_]*\\\///g' {} \;
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"resource_link\":\"\\\/aic\\\/collections\\\/exhibitions\\\/$site\\\/resource?\"resource_link\":\"..?g" {} \;
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"resource_url\":\"..\/images\/http:\\\/\\\/www.artic.edu\\\/aic\\\/collections\\\/citi\\\/resources?\"resource_url\":\"..\\\/images?g" {} \;
+    LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"artwork_link\":\"\\\/aic\\\/collections\\\/exhibitions\\\/$site\\\/artwork?\"artwork_link\":\"..?g" {} \;
     
     # Make links local
     #LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e "s?http:\/\/www.artic.edu\/aic\/collections\/exhibitions\/$site\/$page\([^\"]*\)?$page\1?g" {} \;
+
+    # Fix links of images to main site
+    LC_ALL=C find . -name '*' -type f -exec sed -i "" -E 's/http:\/\/www.artic.edu\/aic\/collections\/citi\/images\/standard\/[a-zA-Z]*\/[a-zA-Z0-9_]*\///g' {} \;
 
     set_pages_var
 
@@ -330,19 +335,29 @@ do
 	   for page in "${pages[@]}"
 	   do
 	       :
-  	       wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page http://www.artic.edu/aic/collections/exhibitions/$site/$page
+	       if [[ $page == *"/"* ]]; then
+		   wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page/.. http://www.artic.edu/aic/collections/exhibitions/$site/$page
+	       else
+		   wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page http://www.artic.edu/aic/collections/exhibitions/$site/$page
 
-	       ind=1
-	       until [[ $(curl -s http://www.artic.edu/aic/collections/exhibitions/$site/$page/$ind | pcregrep -M "<div id=\"content\">(\n| )+<div id=\"content-content\" class=\"clear-block\">( )+</div>(\n| )+<\!-- /content-content -->(\n| )+</div>") ]]; do
-		   wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page http://www.artic.edu/aic/collections/exhibitions/$site/$page/$ind
-		   let "ind++"
-	       done
+		   ind=1
+		   until [[ $(curl -s http://www.artic.edu/aic/collections/exhibitions/$site/$page/$ind | pcregrep -M "<div id=\"content\">(\n| )+<div id=\"content-content\" class=\"clear-block\">( )+</div>(\n| )+<\!-- /content-content -->(\n| )+</div>") ]]; do
+		       wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page http://www.artic.edu/aic/collections/exhibitions/$site/$page/$ind
+		       let "ind++"
+		   done
+	       fi
 
 	   done
 
-	   # Wget links and images that are in Javascript objects
+	   # For all the sub pages, wget links and images that are in Javascript objects
 	   grep -roE "resource_link\":\"[\\\\\/a-zA-Z0-9-]+" * | cut -f3- -d\" | sed -E 's/\\\//\//g' | xargs -I % wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site http://www.artic.edu/%
 	   grep -roE "resource_image_thumbnail\":\"[\\\\\/a-zA-Z0-9_\.:-]+" * | cut -f3- -d\" | sed -E 's/\\\//\//g' | xargs -I % wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site %
+	   grep -roE "artwork_link\":\"[\\\\\/a-zA-Z0-9-]+" * | cut -f3- -d\" | sed -E 's/\\\//\//g' | xargs -I % wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site http://www.artic.edu/%
+	   grep -roE "object_image_thumbnail\":\"[\\\\\/a-zA-Z0-9_\.:-]+" * | cut -f3- -d\" | sed -E 's/\\\//\//g' | xargs -I % wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site %
+	   grep -roE "object_image_medium\":\"[\\\\\/a-zA-Z0-9_\.:-]+" * | cut -f3- -d\" | sed -E 's/\\\//\//g' | xargs -I % wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site %
+
+	   # Get large images
+	   find . -name '*' -type f -depth 1 -exec grep -o "http:\/\/www.artic.edu\/aic\/collections\/citi\/images\/standard\/[a-zA-Z]*\/[a-zA-Z0-9_]*\/[0-9a-z_.]*" {} \; | xargs -I % wget --timestamping --directory-prefix=$OUTPUT/$site %
 
 	   rm -rf $BACKUP_DIR/$site
 	   cp -r sites/$site $BACKUP_DIR/
