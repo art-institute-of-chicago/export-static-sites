@@ -1,9 +1,25 @@
 #!/bin/bash
 
+# Drupal 5 Exhibitions Export
+#
 # Script to export all of our Drupal 5 microsites to static sites. These were all created between
 # 2008 and 2011 to promote museum exhibitions.
 #
-# Not that for `sed`s to work properly on OSX they're all preceded by `LC_ALL=C`. See:
+# This script runs a series of `wget` commands to retrieve each site, move files around into a
+# normalized directory structure, then does a series of `sed` find and replaces to correct
+# references to requisite assets.
+#
+# The `wget`s are run once for each page in each microsite. This script was written this way
+# rather than using `wget`'s `--recursive` flag so that each microsite can be isolated and
+# treated individually. The recursive flag inevitably jumped around to other microsites making them
+# hard to keep separate from each other. Likewise the `--no-directories` flag is used to squash
+# all requisite assets like JavaScript, CSS and images into a single directory, then moved around
+# after the fact. Each of these pages contained assets in all sorts of directory structures that
+# didn't need to be maintained in a static distribution. So `--no-directories` allows this script
+# to start from scratch and move files into a structure that makes sense outside of the Drupal
+# framework.
+#
+# Note that for `sed`s to work properly on OSX they're all preceded by `LC_ALL=C`. See:
 # https://stackoverflow.com/questions/19242275/re-error-illegal-byte-sequence-on-mac-os-x
 
 # Colors
