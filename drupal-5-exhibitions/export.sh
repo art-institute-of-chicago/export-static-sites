@@ -215,7 +215,7 @@ function remove_bad_files()
     rm */robots.txt*
 }
 
-# Array of sites to export
+Array of sites to export
 sites=(
     'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2008'
     'http://www.artic.edu/aic/collections/exhibitions/Ryerson-2009'
@@ -315,8 +315,26 @@ Ryerson_pages=(
 
 Modern_pages=(
     'Guitarist'
+    'Improvisation'
+    'Bathers'
+    'Black-Cross'
+    'American-Gothic'
+    'Time'
+    'Nighthawks'
+    'Greyed-Rainbow'
+    'Mao'
+    'Zapata'
+    'Clown'
+    'Monk'
     'lesson'
+    'resource/1024'
+    'resource/1254'
+    'resource/1022'
+    'resource/1023'
     'family'
+    'resource/1049'
+    'resource/1048'
+    'resource/1050'
     'books-media'
     'glossary'
     'selectedworks'
@@ -508,7 +526,7 @@ Indian_pages=(
     'selectedworks'
 )
 
-American_page=(
+American_pages=(
     'MrsHubbard'
     'high-chest'
     'Bar-room'
@@ -535,7 +553,7 @@ American_page=(
     'selectedworks'
 )
 
-Goldberg_page=(
+Goldberg_pages=(
     'overview'
     'Industry'
     'Community'
@@ -1066,7 +1084,7 @@ homer_exhb_pages=(
     'behindscenes'
 )
 
-homer=(
+homer_pages=(
     'behindscenes'
     'background'
     'about'
@@ -1352,11 +1370,11 @@ do
 	   do
 	       :
 	       if [[ $page == *"/"* ]]; then
-		   wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page/.. http://www.artic.edu/aic/collections/exhibitions/$site/$page
+		   wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/${page/\/*/\/} http://www.artic.edu/aic/collections/exhibitions/$site/$page
 	       else
 		   wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page http://www.artic.edu/aic/collections/exhibitions/$site/$page
 
-		   if [[ "$page" != "artwork" && "$page" != "artworks" && "$page" != "event" && "$page" != "events" && "$page" != "comments" && "$page" != "map" && "$page" != "tools" && "$page" != "resource" ]] ; then
+		   if [[ "$page" != "artwork" && "$page" != "artworks" && "$page" != "event" && "$page" != "events" && "$page" != "comments" && "$page" != "map" && "$page" != "tools" && "$page" != "resource" && "$page" != "resource?page=1" ]] ; then
 		       ind=1
 		       until [[ $(curl -s http://www.artic.edu/aic/collections/exhibitions/$site/$page/$ind | pcregrep -M "<div id=\"content\">(\n| )+<div id=\"content-content\" class=\"clear-block\">( )+</div>(\n| )+<\!-- /content-content -->(\n| )+</div>") ]]; do
 			   wget $WGET_PARAMS --directory-prefix=$OUTPUT/$site/$page http://www.artic.edu/aic/collections/exhibitions/$site/$page/$ind
