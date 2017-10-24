@@ -1348,7 +1348,7 @@ function set_pages_var()
 if [ -f _export.status ]; then
     read SITE < _export.status
 fi
-   
+
 for i in "${sites[@]}"
 do
    : 
