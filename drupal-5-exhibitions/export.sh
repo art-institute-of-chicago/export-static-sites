@@ -52,7 +52,7 @@ do
     case "$1" in
 	--help | -h)
 	    usage
-            exit 0
+	    exit 0
 	    ;;
 	--output-dir | -o)
 	    OUTPUT=$2
@@ -152,7 +152,7 @@ function fix_links ()
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"resource_link\":\"\\\/aic\\\/collections\\\/exhibitions\\\/$site\\\/resource?\"resource_link\":\"..?g" {} \;
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"resource_url\":\"..\/images\/http:\\\/\\\/www.artic.edu\\\/aic\\\/collections\\\/citi\\\/resources?\"resource_url\":\"..\\\/images\\\/?g" {} \;
     LC_ALL=C find . -name '*' -type f -exec sed -i "" -E "s?\"artwork_link\":\"\\\/aic\\\/collections\\\/exhibitions\\\/$site\\\/artwork?\"artwork_link\":\"..?g" {} \;
-    
+
     # Make links local
     #LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e "s?http:\/\/www.artic.edu\/aic\/collections\/exhibitions\/$site\/$page\([^\"]*\)?$page\1?g" {} \;
 
@@ -1083,6 +1083,118 @@ VictPhotoColl_pages=(
     'rules'
     'MadameB'
     'MadameB1'
+    'MadameB2'
+    'MadameB3'
+    'MadameB4'
+    'MadameB5'
+    'MadameB6'
+    'MadameB7'
+    'MadameB8'
+    'MadameB9'
+    'MadameB10'
+    'MadameB11'
+    'MadameB12'
+    'MadameB13'
+    'MadameB14'
+    'MadameB15'
+    'MadameB16'
+    'MadameB17'
+    'MadameB18'
+    'MadameB19'
+    'MadameB20'
+    'MadameB21'
+    'MadameB22'
+    'MadameB23'
+    'MadameB24'
+    'MadameB25'
+    'MadameB26'
+    'MadameB27'
+    'MadameB28'
+    'MadameB29'
+    'MadameB30'
+    'MadameB31'
+    'MadameB32'
+    'MadameB33'
+    'MadameB34'
+    'MadameB35'
+    'MadameB36'
+    'MadameB37'
+    'MadameB38'
+    'MadameB39'
+    'MadameB40'
+    'MadameB41'
+    'MadameB42'
+    'MadameB43'
+    'MadameB44'
+    'MadameB45'
+    'MadameB46'
+    'MadameB47'
+    'MadameB48'
+    'MadameB49'
+    'MadameB50'
+    'MadameB51'
+    'MadameB52'
+    'MadameB53'
+    'MadameB54'
+    'MadameB55'
+    'MadameB56'
+    'MadameB57'
+    'MadameB58'
+    'MadameB59'
+    'MadameB60'
+    'MadameB61'
+    'MadameB62'
+    'MadameB63'
+    'MadameB64'
+    'MadameB65'
+    'MadameB66'
+    'MadameB67'
+    'MadameB68'
+    'MadameB69'
+    'MadameB70'
+    'MadameB71'
+    'MadameB72'
+    'MadameB73'
+    'MadameB74'
+    'MadameB75'
+    'MadameB76'
+    'MadameB77'
+    'MadameB78'
+    'MadameB79'
+    'MadameB80'
+    'MadameB81'
+    'MadameB82'
+    'MadameB83'
+    'MadameB84'
+    'MadameB85'
+    'MadameB86'
+    'MadameB87'
+    'MadameB88'
+    'MadameB89'
+    'MadameB90'
+    'MadameB91'
+    'MadameB92'
+    'MadameB93'
+    'MadameB94'
+    'MadameB95'
+    'MadameB96'
+    'MadameB97'
+    'MadameB98'
+    'MadameB99'
+    'MadameB100'
+    'MadameB101'
+    'MadameB102'
+    'MadameB103'
+    'MadameB104'
+    'MadameB105'
+    'MadameB106'
+    'MadameB107'
+    'MadameB108'
+    'MadameB109'
+    'MadameB110'
+    'MadameB111'
+    'MadameB112'
+    'MadameB113'
     'artwork'
     'artwork/201514'
     'artwork/201515'
@@ -1916,12 +2028,12 @@ fi
 
 for i in "${sites[@]}"
 do
-   : 
+   :
    site=${i:49}
 
    if [ -z $SITE ] || [ $SITE = $site ]; then
        echo "Getting ${site}..."
-       
+
        if [ "$FROM_BACKUP" = true ] ; then
 	   cp -r $BACKUP_DIR/$site sites/
        else
