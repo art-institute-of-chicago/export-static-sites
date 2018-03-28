@@ -88,7 +88,7 @@ function move_js ()
 function clean_js ()
 {
     echo "Cleaning js files..."
-    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\/\-]*\)\.js?"../js\/\1\.js?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\/\-]*\)\.js?"../js\/\1\.js?g' {} \;
     LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)\.js?"js\/\1\.js?g' {} \;
 }
 
@@ -103,8 +103,31 @@ function move_css ()
 function clean_css ()
 {
     echo "Cleaning css files..."
-    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\/\-]*\)\.css?"../css\/\1\.css?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\/\-]*\)\.css?"../css\/\1\.css?g' {} \;
     LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)\.css?"css\/\1\.css?g' {} \;
+}
+
+function move_assets ()
+{
+    echo "Moving asset files..."
+    mkdir assets
+    mv */*.pdf assets/
+    mv *.pdf assets/
+    mv */*.mp3 assets/
+    mv *.mp3 assets/
+    mv */Rsrc_* assets/
+    mv Rsrc_* assets/
+}
+
+function clean_assets ()
+{
+    echo "Cleaning assets files..."
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"[a-zA-Z0-9_\.\-\:\/]*\/\([a-zA-Z0-9_\.\-\:]*\)\.pdf?"../assets\/\1\.pdf?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"[a-zA-Z0-9_\.\-\:\/]*\/\([a-zA-Z0-9_\.\-\:]*\)\.mp3?"../assets\/\1\.mp3?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\/\-\:]*\)Rsrc_\([a-zA-Z0-9_\.\-]*\)"?"../assets\/Rsrc_\2"?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)\.pdf?"assets\/\1\.pdf?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)\.mp3?"assets\/\1\.mp3?g' {} \;
+    LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)Rsrc_\([a-zA-Z0-9_\.\-]*\)"?"assets\/Rsrc_\2?g' {} \;
 }
 
 function move_image ()
@@ -122,9 +145,9 @@ function move_image ()
 function clean_image ()
 {
     echo "Cleaning image files..."
-    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_./-]*\)\.png?"../images\/\1\.png?g' {} \;
-    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_./-]*\)\.jpg?"../images\/\1\.jpg?g' {} \;
-    LC_ALL=C find . -name '*' \( -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_./-]*\)\.gif?"../images\/\1\.gif?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_./-]*\)\.png?"../images\/\1\.png?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_./-]*\)\.jpg?"../images\/\1\.jpg?g' {} \;
+    LC_ALL=C find . -name '*' \( -path ./assets -o -path ./js -o -path ./css -o -path ./images \) -prune -o -type f -depth 2 -exec sed -i "" -e 's?"\([a-zA-Z0-9_./-]*\)\.gif?"../images\/\1\.gif?g' {} \;
     LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)\.png?"images\/\1\.png?g' {} \;
     LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)\.jpg?"images\/\1\.jpg?g' {} \;
     LC_ALL=C find . -name '*' -type f -depth 1 -exec sed -i "" -e 's?"\([a-zA-Z0-9_\.\-]*\)\.gif?"images\/\1\.gif?g' {} \;
@@ -2072,6 +2095,9 @@ do
 	   # Get large images
 	   find . -name '*' -type f -depth 2 -exec grep -o "http:\/\/www.artic.edu\/aic\/collections\/citi\/images\/standard\/[a-zA-Z]*\/[a-zA-Z0-9_]*\/[0-9a-z_.]*" {} \; | xargs -I % wget --timestamping --directory-prefix=$OUTPUT/$site %
 
+	   # Get resources
+	   find . -name '*' -type f -depth 2 -exec grep -o "http:\/\/www.artic.edu\/aic\/collections\/citi\/resources\/[0-9a-zA-Z_.]*" {} \; | xargs -I % wget --timestamping --directory-prefix=$OUTPUT/$site %
+
 	   rm -rf $BACKUP_DIR/$site
 	   cp -r sites/$site $BACKUP_DIR/
        fi
@@ -2081,9 +2107,11 @@ do
        move_js
        move_css
        move_image
+       move_assets
        clean_js
        clean_css
        clean_image
+       clean_assets
        fix_links
        remove_bad_files
        move_files_to_index
